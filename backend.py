@@ -6,8 +6,7 @@ import secrets
 import os
 
 app = Flask(__name__)
-CORS(app)
-
+CORS(app, resources={r"/*": {"origins": "*"}})
 # Database configuration
 DATABASE = "webtienganh.db"
 
