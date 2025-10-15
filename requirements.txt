@@ -1,0 +1,11 @@
+# Web Framework
+Flask==3.0.3
+
+# CORS Support for Cross-Origin Requests
+flask-cors==6.0.1
+
+# WSGI HTTP Server for Production (recommended for deployment)
+gunicorn==21.2.0
+
+# Note: SQLite3 is included with Python standard library (no installation needed)
+# Note: hashlib and secrets are part of Python standard library (no installation needed)
