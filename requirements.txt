@@ -4,8 +4,13 @@ Flask==3.0.3
 # CORS Support for Cross-Origin Requests
 flask-cors==6.0.1
 
+# PostgreSQL adapter for Python
+psycopg2-binary==2.9.9
+
 # WSGI HTTP Server for Production (recommended for deployment)
 gunicorn==21.2.0
 
-# Note: SQLite3 is included with Python standard library (no installation needed)
+# HTTP Library for seeding script (optional)
+requests==2.31.0
+
 # Note: hashlib and secrets are part of Python standard library (no installation needed)
