@@ -193,7 +193,7 @@ def login():
     
     # Find user
     cursor.execute(
-        'SELECT username, email, is_admin FROM users WHERE email = %s AND password = ?',
+        'SELECT username, email, is_admin FROM users WHERE email = %s AND password = %s',
         (email, hashed_password)
     )
     user = cursor.fetchone()
@@ -202,7 +202,7 @@ def login():
         # Generate session token
         token = generate_session_token()
         cursor.execute(
-            'INSERT INTO sessions (email, token) VALUES (?, ?)',
+            'INSERT INTO sessions (email, token) VALUES (%s, %s)',
             (email, token)
         )
         conn.commit()
@@ -332,7 +332,7 @@ def get_default_flashcards():
     
     if unit:
         cursor.execute(
-            'SELECT id, unit, front, back FROM default_flashcards WHERE unit = ?',
+            'SELECT id, unit, front, back FROM default_flashcards WHERE unit = %s',
             (unit,)
         )
     else:
@@ -373,11 +373,12 @@ def add_default_flashcard():
     
     # Insert new default flashcard
     cursor.execute(
-        'INSERT INTO default_flashcards (unit, front, back) VALUES (%s, %s, %s)',
+        'INSERT INTO default_flashcards (unit, front, back) VALUES (%s, %s, %s) RETURNING id',
         (unit, front, back)
     )
     
-    card_id = cursor.lastrowid
+    result = cursor.fetchone()
+    card_id = result['id']
     conn.commit()
     conn.close()
     
@@ -417,7 +418,7 @@ def update_default_flashcard(card_id):
     
     # Update default flashcard
     cursor.execute(
-        'UPDATE default_flashcards SET front = ?, back = ? WHERE id = %s',
+        'UPDATE default_flashcards SET front = %s, back = %s WHERE id = %s',
         (front, back, card_id)
     )
     
@@ -505,11 +506,12 @@ def add_flashcard():
     
     # Insert new flashcard
     cursor.execute(
-        'INSERT INTO flashcards (email, unit, front, back) VALUES (%s, %s, %s, %s)',
+        'INSERT INTO flashcards (email, unit, front, back) VALUES (%s, %s, %s, %s) RETURNING id',
         (user['email'], unit, front, back)
     )
     
-    card_id = cursor.lastrowid
+    result = cursor.fetchone()
+    card_id = result['id']
     conn.commit()
     conn.close()
     
@@ -541,7 +543,7 @@ def update_flashcard(card_id):
     
     # Update flashcard if it belongs to the user
     cursor.execute(
-        'UPDATE flashcards SET front = ?, back = ? WHERE id = %s AND email = ?',
+        'UPDATE flashcards SET front = %s, back = %s WHERE id = %s AND email = %s',
         (front, back, card_id, user['email'])
     )
     
@@ -565,7 +567,7 @@ def delete_flashcard(card_id):
     
     # Delete flashcard if it belongs to the user
     cursor.execute(
-        'DELETE FROM flashcards WHERE id = %s AND email = ?',
+        'DELETE FROM flashcards WHERE id = %s AND email = %s',
         (card_id, user['email'])
     )
     
@@ -594,7 +596,7 @@ def get_exercises():
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     
     cursor.execute(
-        'SELECT id, unit, question, option_a, option_b, option_c, option_d, correct_answer FROM exercises WHERE unit = ?',
+        'SELECT id, unit, question, option_a, option_b, option_c, option_d, correct_answer FROM exercises WHERE unit = %s',
         (unit,)
     )
     exercises = cursor.fetchall()
@@ -752,7 +754,7 @@ def get_admin_exercises():
     
     if unit:
         cursor.execute(
-            'SELECT id, unit, question, option_a, option_b, option_c, option_d, correct_answer FROM exercises WHERE unit = ?',
+            'SELECT id, unit, question, option_a, option_b, option_c, option_d, correct_answer FROM exercises WHERE unit = %s',
             (unit,)
         )
     else:
@@ -802,11 +804,12 @@ def add_admin_exercise():
     
     # Insert new exercise
     cursor.execute(
-        'INSERT INTO exercises (unit, question, option_a, option_b, option_c, option_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO exercises (unit, question, option_a, option_b, option_c, option_d, correct_answer) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id',
         (unit, question, option_a, option_b, option_c, option_d, correct_answer)
     )
     
-    exercise_id = cursor.lastrowid
+    result = cursor.fetchone()
+    exercise_id = result['id']
     conn.commit()
     conn.close()
     
@@ -859,7 +862,7 @@ def update_admin_exercise(exercise_id):
     
     # Update exercise
     cursor.execute(
-        'UPDATE exercises SET question = ?, option_a = ?, option_b = ?, option_c = ?, option_d = ?, correct_answer = ? WHERE id = %s',
+        'UPDATE exercises SET question = %s, option_a = %s, option_b = %s, option_c = %s, option_d = %s, correct_answer = %s WHERE id = %s',
         (question, option_a, option_b, option_c, option_d, correct_answer, exercise_id)
     )
     
