@@ -476,7 +476,7 @@ def get_flashcards():
     
     # Filter flashcards for the current user and unit
     cursor.execute(
-        'SELECT id, email, unit, front, back FROM flashcards WHERE email = %s AND unit = ?',
+        'SELECT id, email, unit, front, back FROM flashcards WHERE email = %s AND unit = %s',
         (user['email'], unit)
     )
     flashcards = cursor.fetchall()
